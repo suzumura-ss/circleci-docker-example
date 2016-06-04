@@ -1,0 +1,16 @@
+# https://circleci.com/docs/configuration/
+machine:
+  timezone: GMT
+  ruby:
+    version: 2.3.1
+  services:
+    - docker
+
+dependencies:
+  pre:
+    - docker build --tag suzumura-ss/circleci-docker-example:$CIRCLE_SHA1 .
+
+test:
+  post:
+    - docker run -d -p 3000:80 suzumura-ss/circleci-docker-example:$CIRCLE_SHA1 ./launch.sh; sleep 10
+    - bundle exec ruby test/nginx_test.rb
