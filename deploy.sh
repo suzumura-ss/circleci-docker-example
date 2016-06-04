@@ -1,4 +1,12 @@
 #!/bin/bash
+
+configure_aws_cli(){
+	aws --version
+	aws configure set default.region ap-northeast-1
+	aws configure set default.output json
+}
+
+
 VERSION=${1-$(date +"%Y%m%dT%H%M%S")}
 
 APP_NAME=circleci-docker-example
@@ -9,6 +17,8 @@ set -e
 
 # Create application.zip
 bundle exec rake eb:package[${ZIP_FILE}]
+
+configure_aws_cli
 
 # Create new ElasticBeanstalk version
 aws s3 cp pkg/${ZIP_FILE} s3://${EB_BUCKET}/${ZIP_FILE}
