@@ -3,14 +3,23 @@ machine:
   timezone: GMT
   ruby:
     version: 2.3.1
+  python:
+    version: 2.7.3
   services:
     - docker
 
 dependencies:
   pre:
+    - pip install awscli
     - docker build --tag suzumura-ss/circleci-docker-example:$CIRCLE_SHA1 .
 
 test:
   post:
     - docker run -d -p 3000:80 suzumura-ss/circleci-docker-example:$CIRCLE_SHA1 ./launch.sh; sleep 10
     - bundle exec ruby test/nginx_test.rb
+
+deployment:
+  elasticbeanstalk:
+    branch: master
+    commands:
+      - ./deploy.sh $(date +"%Y%m%dT%H%M%S")
