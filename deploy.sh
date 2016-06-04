@@ -16,6 +16,7 @@ EB_BUCKET=pflabo-elasticbeanstalk-deploy
 set -e
 
 # Create application.zip
+export APPLICATION_VERSION=${VERSION}
 bundle exec rake eb:package[${ZIP_FILE}]
 
 configure_aws_cli
@@ -30,5 +31,4 @@ aws elasticbeanstalk create-application-version \
 # Update ElasticBeanstalk environment to new version
 aws elasticbeanstalk update-environment \
   --environment-name ${ENV_NAME} \
-  --version-label ${VERSION} \
-  --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=APPLICATION_VERSION,Value=${VERSION}
+  --version-label ${VERSION}
